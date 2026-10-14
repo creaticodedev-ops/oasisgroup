@@ -12,9 +12,13 @@ const setMeta = (selector, attr, value) => {
   if (el) el.setAttribute(attr, value)
 }
 
-/** `titleKey={null}` leaves the document title and meta tags to the page (used by the admin area). */
+/**
+ * `titleKey={null}` leaves the document title and meta tags to the page (used by the admin area).
+ * Pages may override the title and description with `setPageMeta({ title, description })`.
+ */
 export const I18nProvider = ({ children, titleKey = 'meta.title' }) => {
   const [locale, setLocaleState] = useState(readInitialLocale)
+  const [pageMeta, setPageMeta] = useState(null)
   const meta = getLocaleMeta(locale)
 
   const setLocale = useCallback((code) => {
@@ -36,7 +40,7 @@ export const I18nProvider = ({ children, titleKey = 'meta.title' }) => {
     }
     /** Structured content (arrays / objects) */
     const tm = (key) => lookup(key) ?? null
-    return { locale, dir: meta.dir, isRtl: meta.dir === 'rtl', setLocale, t, tm }
+    return { locale, dir: meta.dir, isRtl: meta.dir === 'rtl', setLocale, setPageMeta, t, tm }
   }, [locale, meta.dir, setLocale])
 
   useEffect(() => {
@@ -44,12 +48,14 @@ export const I18nProvider = ({ children, titleKey = 'meta.title' }) => {
     html.lang = meta.htmlLang
     html.dir = meta.dir
     if (!titleKey) return
-    document.title = value.t(titleKey)
-    setMeta('meta[name="description"]', 'content', value.t('meta.description'))
-    setMeta('meta[property="og:title"]', 'content', value.t('meta.title'))
-    setMeta('meta[property="og:description"]', 'content', value.t('meta.description'))
+    const title = pageMeta?.title || value.t(titleKey)
+    const description = pageMeta?.description || value.t('meta.description')
+    document.title = title
+    setMeta('meta[name="description"]', 'content', description)
+    setMeta('meta[property="og:title"]', 'content', title)
+    setMeta('meta[property="og:description"]', 'content', description)
     setMeta('meta[property="og:locale"]', 'content', meta.ogLocale)
-  }, [meta.dir, meta.htmlLang, meta.ogLocale, titleKey, value])
+  }, [meta.dir, meta.htmlLang, meta.ogLocale, titleKey, value, pageMeta])
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
 }

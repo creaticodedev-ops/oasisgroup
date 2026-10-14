@@ -1,27 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
 import { adminApi } from './api'
-import { formatCount, formatDateTime, formatMoney, fullName } from './format'
+import { departmentLabel, formatCount, formatDateTime, fullName, typeLabel } from './format'
 import { CheckIcon, ChevronIcon, CloseIcon, SearchIcon, SortIcon } from './icons'
 import { STATUS_ORDER } from './hooks'
 import { Avatar, ErrorState, StatusPill } from './parts'
 import { useAdminText } from './strings'
-import { confirmationMessage, openWhatsApp } from './whatsapp'
+import { followUpMessage, openWhatsApp } from './whatsapp'
 
-const OFFERS = ['essential', 'advanced', 'premium']
-const DURATIONS = ['15d', '1m']
+const TYPES = ['quote', 'contact', 'career']
+const DEPARTMENTS = ['corporate', 'performance', 'facilities', 'it', 'group']
 const PAGE_SIZES = [20, 50, 100]
 const SEARCH_DELAY = 250
 
 const COLUMNS = [
   { key: 'applicant', sort: 'name' },
-  { key: 'city', sort: 'city' },
-  { key: 'amount', sort: 'amount', numeric: true },
-  { key: 'duration' },
-  { key: 'offer' },
+  { key: 'type', sort: 'type' },
+  { key: 'department', sort: 'department' },
+  { key: 'company', sort: 'company' },
   { key: 'date', sort: 'createdAt' },
   { key: 'status', sort: 'status' },
 ]
+
+const ASCENDING_FIRST = ['name', 'company', 'department', 'type']
 
 const useDebounced = (value, ms) => {
   const [debounced, setDebounced] = useState(value)
@@ -37,8 +38,8 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
   const { t, locale } = useI18n()
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('')
-  const [offer, setOffer] = useState('')
-  const [duration, setDuration] = useState('')
+  const [type, setType] = useState('')
+  const [department, setDepartment] = useState('')
   const [sort, setSort] = useState({ key: 'createdAt', order: 'desc' })
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(PAGE_SIZES[0])
@@ -52,7 +53,7 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
 
   useEffect(() => {
     setPage(1)
-  }, [q, status, offer, duration, sort, limit])
+  }, [q, status, type, department, sort, limit])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -60,10 +61,10 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
     const params = { page, limit, sort: sort.key, order: sort.order }
     if (q) params.q = q
     if (status) params.status = status
-    if (offer) params.offer = offer
-    if (duration) params.duration = duration
+    if (type) params.type = type
+    if (department) params.department = department
     adminApi
-      .applications(params, controller.signal)
+      .inquiries(params, controller.signal)
       .then((result) => {
         setData(result)
         setError(null)
@@ -75,10 +76,10 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
         setLoading(false)
       })
     return () => controller.abort()
-  }, [q, status, offer, duration, sort, page, limit, version, attempt])
+  }, [q, status, type, department, sort, page, limit, version, attempt])
 
   const toggleSort = (key) =>
-    setSort((prev) => (prev.key === key ? { key, order: prev.order === 'asc' ? 'desc' : 'asc' } : { key, order: key === 'name' || key === 'city' ? 'asc' : 'desc' }))
+    setSort((prev) => (prev.key === key ? { key, order: prev.order === 'asc' ? 'desc' : 'asc' } : { key, order: ASCENDING_FIRST.includes(key) ? 'asc' : 'desc' }))
 
   const changeStatus = useCallback(
     async (item, next) => {
@@ -86,7 +87,7 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
       try {
         const { item: updated } = await adminApi.setStatus(item.id, next)
         setData((prev) => prev && { ...prev, items: prev.items.map((row) => (row.id === updated.id ? updated : row)) })
-        if (next === 'approved' && updated.phone && !openWhatsApp(updated.phone, confirmationMessage(updated))) onOpen(updated.id)
+        if (next === 'approved' && updated.phone && !openWhatsApp(updated.phone, followUpMessage(updated))) onOpen(updated.id)
         onChanged()
       } catch {
         setAttempt((n) => n + 1)
@@ -108,12 +109,12 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
 
   const counts = data?.counts || {}
   const allCount = STATUS_ORDER.reduce((sum, key) => sum + (counts[key] || 0), 0)
-  const filtered = Boolean(q || status || offer || duration)
+  const filtered = Boolean(q || status || type || department)
   const reset = () => {
     setQuery('')
     setStatus('')
-    setOffer('')
-    setDuration('')
+    setType('')
+    setDepartment('')
   }
 
   return (
@@ -138,19 +139,19 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
           ) : null}
         </label>
         <div className="adm-selects">
-          <select value={offer} onChange={(event) => setOffer(event.target.value)} aria-label={a('table.offer')}>
-            <option value="">{a('table.allOffers')}</option>
-            {OFFERS.map((id) => (
+          <select value={type} onChange={(event) => setType(event.target.value)} aria-label={a('table.type')}>
+            <option value="">{a('table.allTypes')}</option>
+            {TYPES.map((id) => (
               <option key={id} value={id}>
-                {t(`offers.items.${id}.name`)}
+                {typeLabel(t, id)}
               </option>
             ))}
           </select>
-          <select value={duration} onChange={(event) => setDuration(event.target.value)} aria-label={a('table.duration')}>
-            <option value="">{a('table.allDurations')}</option>
-            {DURATIONS.map((id) => (
+          <select value={department} onChange={(event) => setDepartment(event.target.value)} aria-label={a('table.department')}>
+            <option value="">{a('table.allDepartments')}</option>
+            {DEPARTMENTS.map((id) => (
               <option key={id} value={id}>
-                {t(`register.durations.${id}`)}
+                {id === 'group' ? a('table.groupWide') : departmentLabel(t, id)}
               </option>
             ))}
           </select>
@@ -196,12 +197,7 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
                 {COLUMNS.map((column) => {
                   const active = column.sort && sort.key === column.sort
                   return (
-                    <th
-                      key={column.key}
-                      scope="col"
-                      className={column.numeric ? 'is-num' : undefined}
-                      aria-sort={active ? (sort.order === 'asc' ? 'ascending' : 'descending') : undefined}
-                    >
+                    <th key={column.key} scope="col" aria-sort={active ? (sort.order === 'asc' ? 'ascending' : 'descending') : undefined}>
                       {column.sort ? (
                         <button type="button" className="adm-th" onClick={() => toggleSort(column.sort)} title={a('table.sortBy', { column: a(`table.${column.key}`) })}>
                           {a(`table.${column.key}`)}
@@ -236,18 +232,15 @@ export const Applications = ({ version, fresh, onOpen, onChanged }) => {
                         {fullName(item)}
                       </button>
                       <span className="adm-sub" dir="ltr">
-                        {item.email || a('detail.noEmail')}
+                        {item.email}
                       </span>
                     </span>
                   </td>
-                  <td data-label={a('table.city')} dir="auto">
-                    {item.city}
+                  <td data-label={a('table.type')}>{typeLabel(t, item.type)}</td>
+                  <td data-label={a('table.department')}>{departmentLabel(t, item.department)}</td>
+                  <td data-label={a('table.company')} dir="auto">
+                    {item.company || item.city || <span className="adm-muted">—</span>}
                   </td>
-                  <td data-label={a('table.amount')} className="is-num adm-amount" dir="ltr">
-                    {formatMoney(item.amount, locale, item.currency)}
-                  </td>
-                  <td data-label={a('table.duration')}>{t(`register.durations.${item.duration}`)}</td>
-                  <td data-label={a('table.offer')}>{t(`offers.items.${item.offer}.name`)}</td>
                   <td data-label={a('table.date')} className="adm-date">
                     {formatDateTime(item.createdAt, locale)}
                   </td>

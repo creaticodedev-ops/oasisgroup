@@ -4,21 +4,21 @@ const env = (name) => process.env[name]?.trim() || ''
 
 const COPY = {
   fr: {
-    subject: 'US Bonds — Réinitialisation du mot de passe administrateur',
+    subject: 'OASIS GROUP — Réinitialisation du mot de passe administrateur',
     intro: 'Une réinitialisation du mot de passe administrateur a été demandée.',
     action: 'Créer un nouveau mot de passe',
     expiry: 'Ce lien est valable 30 minutes et ne peut être utilisé qu’une seule fois.',
     ignore: 'Si vous n’êtes pas à l’origine de cette demande, ignorez ce message : le mot de passe actuel reste inchangé.',
   },
   en: {
-    subject: 'US Bonds — Admin password reset',
+    subject: 'OASIS GROUP — Admin password reset',
     intro: 'A reset of the administrator password was requested.',
     action: 'Create a new password',
     expiry: 'This link is valid for 30 minutes and can only be used once.',
     ignore: 'If you did not request this, ignore this message: the current password stays unchanged.',
   },
   ar: {
-    subject: 'US Bonds — إعادة تعيين كلمة مرور المسؤول',
+    subject: 'OASIS GROUP — إعادة تعيين كلمة مرور المسؤول',
     intro: 'تم طلب إعادة تعيين كلمة مرور المسؤول.',
     action: 'إنشاء كلمة مرور جديدة',
     expiry: 'هذا الرابط صالح لمدة 30 دقيقة ويمكن استخدامه مرة واحدة فقط.',
@@ -55,12 +55,12 @@ export const deliverResetLink = async (url, locale = 'fr') => {
         from: env('SMTP_FROM') || env('SMTP_USER') || env('ADMIN_EMAIL'),
         to: env('ADMIN_EMAIL'),
         subject: copy.subject,
-        text: `${copy.intro}\n\n${copy.action} : ${url}\n\n${copy.expiry}\n${copy.ignore}\n\nUS Bonds`,
+        text: `${copy.intro}\n\n${copy.action} : ${url}\n\n${copy.expiry}\n${copy.ignore}\n\nOASIS GROUP`,
         html: `<div dir="${dir}" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#111">
 <p>${escapeHtml(copy.intro)}</p>
-<p><a href="${escapeHtml(url)}" style="display:inline-block;padding:12px 22px;border-radius:999px;background:#009a5a;color:#fff;text-decoration:none;font-weight:600">${escapeHtml(copy.action)}</a></p>
+<p><a href="${escapeHtml(url)}" style="display:inline-block;padding:12px 22px;border-radius:2px;background:#0a0a0a;color:#fff;text-decoration:none;font-weight:600">${escapeHtml(copy.action)}</a></p>
 <p style="color:#555">${escapeHtml(copy.expiry)}<br>${escapeHtml(copy.ignore)}</p>
-<p>US Bonds</p></div>`,
+<p>OASIS GROUP</p></div>`,
       })
       return 'email'
     } catch (error) {

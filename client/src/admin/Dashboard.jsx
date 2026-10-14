@@ -96,12 +96,12 @@ export const Dashboard = ({ onLogout }) => {
   useEffect(() => () => clearTimeout(refreshTimer.current), [])
 
   const live = useAdminStream((type, data) => {
-    if (type === 'registration') {
+    if (type === 'inquiry') {
       addNotification(data.notification)
       setToasts((list) => [{ id: data.notification.id, notification: data.notification }, ...list.filter((item) => item.id !== data.notification.id)])
-      setFresh((set) => new Set(set).add(data.application.id))
+      setFresh((set) => new Set(set).add(data.inquiry.id))
       refresh()
-    } else if (type === 'application') {
+    } else if (type === 'inquiry-update') {
       refresh()
     } else if (type === 'notifications') {
       syncNotifications(data)
@@ -125,12 +125,12 @@ export const Dashboard = ({ onLogout }) => {
     (toast) => {
       dismissToast(toast.id)
       if (!toast.notification.read) setRead(toast.notification.id, true)
-      openApplication(toast.notification.registration)
+      openApplication(toast.notification.inquiry)
     },
     [setRead, dismissToast, openApplication],
   )
 
-  const pendingCount = stats.data?.statuses?.pending.count || 0
+  const pendingCount = stats.data?.statuses?.pending || 0
 
   const navLink = (view, Icon, extra = null) => (
     <a
@@ -160,7 +160,7 @@ export const Dashboard = ({ onLogout }) => {
               navigate({ view: 'overview' })
             }}
           >
-            <Logo eager />
+            <Logo />
           </a>
           <button type="button" className="adm-icon-btn adm-side-close" onClick={() => setMenuOpen(false)} aria-label={a('nav.close')}>
             <CloseIcon />

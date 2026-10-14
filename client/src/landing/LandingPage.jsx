@@ -1,47 +1,39 @@
+import { useEffect } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
-import { useReveal } from './hooks'
+import { ContactProvider } from './contact/ContactProvider'
+import { scrollToSection, useReveal, useScrollProgress } from './hooks'
 import { Footer } from './layout/Footer'
 import { Navbar } from './layout/Navbar'
-import { OverlayProvider } from './overlays/OverlayProvider'
-import { Approach } from './sections/Approach'
-import { CapitalSection } from './sections/CapitalSection'
-import { FinalCTA } from './sections/FinalCTA'
-import { Hero } from './sections/Hero'
-import { HowItWorks } from './sections/HowItWorks'
-import { Intro } from './sections/Intro'
-import { LiveNews } from './sections/LiveNews'
-import { MarketSection } from './sections/MarketSection'
-import { OffersPreview } from './sections/OffersPreview'
-import { Reviews } from './sections/Reviews'
-import { Services } from './sections/Services'
-import { WhyUSBonds } from './sections/WhyUSBonds'
+import { parseRoute, usePathname } from './navigation'
+import { DepartmentPage } from './pages/DepartmentPage'
+import { HomePage } from './pages/HomePage'
 import './landing.css'
-import './news.css'
-import './reviews.css'
 
 export const LandingPage = () => {
   const { locale } = useI18n()
-  useReveal(locale)
+  const pathname = usePathname()
+  const route = parseRoute(pathname) || { name: 'home' }
+  const pageKey = route.name === 'department' ? route.slug : 'home'
+
+  useReveal(`${locale}|${pathname}`)
+  useScrollProgress()
+
+  // Deep links (/#contact, /expertises/it#contact): the target exists only once React has rendered.
+  useEffect(() => {
+    const id = window.location.hash.slice(1)
+    if (!id) return undefined
+    const frame = requestAnimationFrame(() => scrollToSection(id, 'auto'))
+    return () => cancelAnimationFrame(frame)
+  }, [])
 
   return (
-    <OverlayProvider>
-      <Navbar />
-      <main id="main" tabIndex={-1}>
-        <Hero />
-        <Intro />
-        <Services />
-        <WhyUSBonds />
-        <MarketSection />
-        <CapitalSection />
-        <OffersPreview />
-        <Reviews />
-        <HowItWorks />
-        <LiveNews />
-        <Approach />
-        <FinalCTA />
+    <ContactProvider>
+      <Navbar route={route} />
+      <main id="main" tabIndex={-1} key={pageKey}>
+        {route.name === 'department' ? <DepartmentPage slug={route.slug} /> : <HomePage />}
       </main>
       <Footer />
-    </OverlayProvider>
+    </ContactProvider>
   )
 }
 

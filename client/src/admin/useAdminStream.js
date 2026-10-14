@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { adminApi, STREAM_URL, UNAUTHORIZED_EVENT } from './api'
 
-const EVENTS = ['registration', 'application', 'notifications']
+const EVENTS = ['inquiry', 'inquiry-update', 'notifications']
 const RECONNECT_MS = 5000
 
 /**
  * Subscribes to the admin Server-Sent Events stream. `onEvent(type, data)` receives
- * `registration`, `application`, `notifications`, and `resync` after a reconnection.
+ * `inquiry` (new request), `inquiry-update`, `notifications`, and `resync` after a reconnection.
  * Returns whether the stream is currently connected.
  */
 export const useAdminStream = (onEvent) => {

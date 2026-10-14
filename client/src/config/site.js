@@ -5,37 +5,37 @@ const env = import.meta.env
  * empty fields are simply not rendered (nothing is invented).
  */
 export const SITE = {
-  name: 'US Bonds',
+  name: 'OASIS GROUP',
   url: env.VITE_SITE_URL || '',
   contact: {
     email: env.VITE_CONTACT_EMAIL || '',
     phone: env.VITE_CONTACT_PHONE || '',
     whatsapp: env.VITE_CONTACT_WHATSAPP || '',
     address: env.VITE_COMPANY_ADDRESS || '',
+    hours: env.VITE_CONTACT_HOURS || '',
+  },
+  legal: {
+    company: env.VITE_LEGAL_NAME || '',
+    form: env.VITE_LEGAL_FORM || '',
+    rc: env.VITE_LEGAL_RC || '',
+    ice: env.VITE_LEGAL_ICE || '',
+    taxId: env.VITE_LEGAL_IF || '',
   },
   social: {
+    linkedin: env.VITE_SOCIAL_LINKEDIN || '',
     instagram: env.VITE_SOCIAL_INSTAGRAM || '',
-    tiktok: env.VITE_SOCIAL_TIKTOK || '',
-    telegram: env.VITE_SOCIAL_TELEGRAM || '',
+    facebook: env.VITE_SOCIAL_FACEBOOK || '',
   },
 }
 
-/**
- * Every landing page section, in display order. `primary` items are shown directly in the desktop bar,
- * the others are grouped under "More"; the mobile menu lists them all.
- */
+/** Home page sections, in display order. `primary` items are shown in the desktop bar; the full menu lists them all. */
 export const NAV_ITEMS = [
-  { id: 'top', key: 'home', primary: true },
   { id: 'about', key: 'about', primary: true },
-  { id: 'services', key: 'services', primary: true },
-  { id: 'why', key: 'why' },
-  { id: 'markets', key: 'markets', primary: true },
-  { id: 'capital', key: 'investment', primary: true },
-  { id: 'offers', key: 'offers', primary: true },
-  { id: 'reviews', key: 'reviews' },
-  { id: 'how', key: 'how' },
-  { id: 'news', key: 'news', primary: true },
-  { id: 'approach', key: 'approach' },
+  { id: 'expertises', key: 'expertises', primary: true },
+  { id: 'why', key: 'why', primary: true },
+  { id: 'commitments', key: 'commitments' },
+  { id: 'projects', key: 'projects', primary: true },
+  { id: 'careers', key: 'careers', primary: true },
   { id: 'contact', key: 'contact' },
 ]
 
@@ -47,14 +47,11 @@ const httpsUrl = (value) => {
   }
 }
 
-/** Official accounts. A network without a configured https:// URL is shown as "coming soon", never linked. */
-export const SOCIAL_LINKS = ['instagram', 'tiktok', 'telegram'].map((key) => ({ key, url: httpsUrl(SITE.social[key]) }))
+/** Official accounts. Only networks with a configured https:// URL are displayed. */
+export const SOCIAL_LINKS = Object.keys(SITE.social)
+  .map((key) => ({ key, url: httpsUrl(SITE.social[key]) }))
+  .filter((item) => item.url)
 
-/** Where "Commencer" leads until registration exists. */
-export const START_TARGET = 'offers'
-
-export const contactHref = (subject = '') => {
-  const { email } = SITE.contact
-  if (!email) return '#contact'
-  return subject ? `mailto:${email}?subject=${encodeURIComponent(subject)}` : `mailto:${email}`
-}
+export const LEGAL_ITEMS = Object.entries(SITE.legal)
+  .filter(([, value]) => value)
+  .map(([key, value]) => ({ key, value }))

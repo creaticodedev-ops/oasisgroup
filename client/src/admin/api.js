@@ -1,4 +1,4 @@
-export const UNAUTHORIZED_EVENT = 'usbonds:admin-unauthorized'
+export const UNAUTHORIZED_EVENT = 'oasis:admin-unauthorized'
 
 const request = async (path, { method = 'GET', body, signal } = {}) => {
   const response = await fetch(`/api/admin${path}`, {
@@ -39,9 +39,9 @@ export const adminApi = {
   resetPassword: (token, password, confirm) => request('/password/reset', { method: 'POST', body: { token, password, confirm } }),
   changePassword: (current, password, confirm) => request('/password/change', { method: 'POST', body: { current, password, confirm } }),
   stats: (signal) => request(`/stats?tz=${encodeURIComponent(timeZone())}`, { signal }),
-  applications: (params, signal) => request(`/registrations?${new URLSearchParams(params)}`, { signal }),
-  application: (id, signal) => request(`/registrations/${encodeURIComponent(id)}`, { signal }),
-  setStatus: (id, status) => request(`/registrations/${encodeURIComponent(id)}`, { method: 'PATCH', body: { status } }),
+  inquiries: (params, signal) => request(`/inquiries?${new URLSearchParams(params)}`, { signal }),
+  inquiry: (id, signal) => request(`/inquiries/${encodeURIComponent(id)}`, { signal }),
+  setStatus: (id, status) => request(`/inquiries/${encodeURIComponent(id)}`, { method: 'PATCH', body: { status } }),
   notifications: (filter, signal) => request(`/notifications?filter=${filter}&limit=60`, { signal }),
   readAll: () => request('/notifications/read', { method: 'POST', body: { all: true } }),
   setRead: (id, read) => request(`/notifications/${encodeURIComponent(id)}`, { method: 'PATCH', body: { read } }),

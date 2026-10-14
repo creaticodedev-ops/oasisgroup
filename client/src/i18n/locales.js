@@ -5,10 +5,13 @@ export const LOCALES = [
 ]
 
 export const DEFAULT_LOCALE = 'fr'
-const STORAGE_KEY = 'udbonds-lang'
+const STORAGE_KEY = 'oasis-lang'
 const CODES = LOCALES.map((item) => item.code)
 
 export const getLocaleMeta = (code) => LOCALES.find((item) => item.code === code) || LOCALES[0]
+
+/** Figures and dates always use Latin digits, whatever the interface language. */
+export const numberLocale = (locale) => `${getLocaleMeta(locale).htmlLang}-u-nu-latn`
 
 export const readInitialLocale = () => {
   try {

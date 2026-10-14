@@ -1,11 +1,8 @@
 import 'dotenv/config'
 import express from 'express'
 import { connectDB, dbState, disconnectDB } from './configs/db.js'
-import { migrateLegacyStatuses } from './models/Registration.js'
 import { adminRouter } from './routes/admin.js'
-import { marketRouter } from './routes/market.js'
-import { newsRouter } from './routes/news.js'
-import { registrationsRouter } from './routes/registrations.js'
+import { inquiriesRouter } from './routes/inquiries.js'
 import { adminConfigured, loadAdminAccount } from './services/adminAuth.js'
 
 const PORT = Number(process.env.PORT) || 5000
@@ -20,9 +17,7 @@ app.get('/api/health', (_req, res) => {
   res.status(db === 'connected' ? 200 : 503).json({ status: db === 'connected' ? 'ok' : 'degraded', db })
 })
 
-app.use('/api/market', marketRouter)
-app.use('/api/news', newsRouter)
-app.use('/api/registrations', registrationsRouter)
+app.use('/api/inquiries', inquiriesRouter)
 app.use('/api/admin', adminRouter)
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'Not found' }))
@@ -35,13 +30,12 @@ app.use((err, _req, res, _next) => {
 })
 
 if (await connectDB()) {
-  await migrateLegacyStatuses().catch((error) => console.error('[db] Status migration failed:', error.message))
   await loadAdminAccount().catch((error) => console.error('[admin] Account loading failed:', error.message))
   if (!adminConfigured()) console.warn('[admin] No administrator account yet - set ADMIN_PASSWORD (12 characters minimum) in server/.env and restart')
 }
 
 const server = app.listen(PORT, HOST, () => {
-  console.log(`[api] US Bonds API listening on http://${HOST}:${PORT}`)
+  console.log(`[api] OASIS GROUP API listening on http://${HOST}:${PORT}`)
 })
 
 const shutdown = async () => {

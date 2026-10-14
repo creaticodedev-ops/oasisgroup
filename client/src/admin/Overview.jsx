@@ -1,6 +1,6 @@
 import { useI18n } from '../i18n/I18nProvider'
 import { BarList, DailyChart, StatusBreakdown } from './charts'
-import { dayKey, formatClock, formatCount, formatMoney, formatShare, fullName, relativeTime } from './format'
+import { dayKey, departmentLabel, formatClock, formatCount, formatShare, fullName, relativeTime, typeLabel } from './format'
 import { ChevronIcon } from './icons'
 import { useCountUp, useNow } from './hooks'
 import { Avatar, ErrorState, StatusPill } from './parts'
@@ -51,7 +51,6 @@ export const Overview = ({ stats, error, onRetry, onOpen, onViewAll }) => {
   const { statuses, total } = stats
   const today = stats.daily.find((row) => row.day === dayKey(new Date()))?.count || 0
   const share = (count) => a('overview.kpi.share', { pct: formatShare(total ? count / total : 0, locale) })
-  const requested = (amount) => a('overview.kpi.requested', { amount: formatMoney(amount, locale) })
 
   return (
     <div className="adm-view">
@@ -65,10 +64,10 @@ export const Overview = ({ stats, error, onRetry, onOpen, onViewAll }) => {
       </header>
 
       <div className="adm-kpis">
-        <Kpi index={0} locale={locale} label={a('overview.kpi.total')} value={total} foot={`${requested(stats.amount)} · ${a('overview.kpi.today', { n: formatCount(today, locale) })}`} />
-        <Kpi index={1} locale={locale} accent label={a('overview.kpi.pending')} value={statuses.pending.count} foot={share(statuses.pending.count)} />
-        <Kpi index={2} locale={locale} label={a('overview.kpi.active')} value={statuses.active.count} foot={requested(statuses.active.amount)} />
-        <Kpi index={3} locale={locale} label={a('overview.kpi.completed')} value={statuses.completed.count} foot={requested(statuses.completed.amount)} />
+        <Kpi index={0} locale={locale} label={a('overview.kpi.total')} value={total} foot={a('overview.kpi.today', { n: formatCount(today, locale) })} />
+        <Kpi index={1} locale={locale} accent label={a('overview.kpi.pending')} value={statuses.pending} foot={share(statuses.pending)} />
+        <Kpi index={2} locale={locale} label={a('overview.kpi.active')} value={statuses.active} foot={share(statuses.active)} />
+        <Kpi index={3} locale={locale} label={a('overview.kpi.completed')} value={statuses.completed} foot={share(statuses.completed)} />
       </div>
 
       <div className="adm-grid">
@@ -76,7 +75,7 @@ export const Overview = ({ stats, error, onRetry, onOpen, onViewAll }) => {
           <DailyChart daily={stats.daily} days={stats.days} locale={locale} />
         </Panel>
 
-        <Panel title={a('overview.distribution')} aside={<span className="adm-panel-note">{a('overview.capital')}</span>} className="is-side">
+        <Panel title={a('overview.distribution')} className="is-side">
           <StatusBreakdown stats={stats} locale={locale} />
         </Panel>
 
@@ -99,12 +98,10 @@ export const Overview = ({ stats, error, onRetry, onOpen, onViewAll }) => {
                     <span className="adm-recent-id">
                       <strong dir="auto">{fullName(item)}</strong>
                       <span dir="auto">
-                        {item.city} · {relativeTime(item.createdAt, now, locale, a('justNow'))}
+                        {typeLabel(t, item.type)} · {relativeTime(item.createdAt, now, locale, a('justNow'))}
                       </span>
                     </span>
-                    <span className="adm-recent-amount" dir="ltr">
-                      {formatMoney(item.amount, locale, item.currency)}
-                    </span>
+                    <span className="adm-recent-amount">{departmentLabel(t, item.department)}</span>
                     <StatusPill status={item.status} />
                     <ChevronIcon />
                   </button>
@@ -117,16 +114,22 @@ export const Overview = ({ stats, error, onRetry, onOpen, onViewAll }) => {
         </Panel>
 
         <div className="adm-stackcol">
-          <Panel title={a('overview.offers')}>
+          <Panel title={a('overview.types')}>
             <BarList
               locale={locale}
-              rows={Object.entries(stats.offers).map(([key, row]) => ({ key, label: t(`offers.items.${key}.name`), ...row }))}
+              total={total}
+              rows={Object.entries(stats.types).map(([key, count]) => ({ key, label: typeLabel(t, key), count }))}
             />
           </Panel>
-          <Panel title={a('overview.durations')}>
+          <Panel title={a('overview.departments')}>
             <BarList
               locale={locale}
-              rows={Object.entries(stats.durations).map(([key, row]) => ({ key, label: t(`register.durations.${key}`), ...row }))}
+              total={total}
+              rows={Object.entries(stats.departments).map(([key, count]) => ({
+                key,
+                label: key === 'group' ? a('table.groupWide') : departmentLabel(t, key),
+                count,
+              }))}
             />
           </Panel>
         </div>

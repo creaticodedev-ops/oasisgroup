@@ -11,7 +11,7 @@ export const AuthLayout = ({ titleId, kicker, title, lead, seal = <LockIcon />, 
       <div className="adm-login-grid" aria-hidden="true" />
       <header className="adm-login-top">
         <a href="/" className="adm-login-logo" aria-label={a('login.back')}>
-          <Logo eager />
+          <Logo />
         </a>
         <LangSwitch />
       </header>
@@ -36,9 +36,9 @@ export const PasswordField = ({ id, label, value, onChange, error, autoComplete,
   const a = useAdminText()
   const [visible, setVisible] = useState(false)
   return (
-    <div className={`field${error ? ' has-error' : ''}`}>
+    <div className={`adm-field${error ? ' has-error' : ''}`}>
       <label htmlFor={id}>{label}</label>
-      <div className="field-control">
+      <div className="adm-field-control">
         <input
           id={id}
           type={visible ? 'text' : 'password'}
@@ -66,7 +66,7 @@ export const PasswordField = ({ id, label, value, onChange, error, autoComplete,
         </button>
       </div>
       {children}
-      <p className="field-error" id={`${id}-error`} role="alert">
+      <p className="adm-field-error" id={`${id}-error`} role="alert">
         {error}
       </p>
     </div>

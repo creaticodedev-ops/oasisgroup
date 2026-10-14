@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { dayKey, formatCount, formatDayLabel, formatMoney, formatShare } from './format'
+import { dayKey, formatCount, formatDayLabel, formatShare } from './format'
 import { STATUS_ORDER } from './hooks'
 import { useAdminText } from './strings'
 
@@ -27,7 +27,7 @@ const buildSeries = (daily, days) => {
     const date = new Date(today)
     date.setDate(today.getDate() - (days - 1 - index))
     const row = rows.get(dayKey(date))
-    return { key: dayKey(date), date, count: row?.count || 0, amount: row?.amount || 0 }
+    return { key: dayKey(date), date, count: row?.count || 0 }
   })
 }
 
@@ -112,7 +112,7 @@ export const DailyChart = ({ daily, days, locale }) => {
           role="status"
         >
           <strong>{formatDayLabel(active.date, locale)}</strong>
-          <span>{a('overview.chart.tooltip', { n: formatCount(active.count, locale), amount: formatMoney(active.amount, locale) })}</span>
+          <span>{a('overview.chart.tooltip', { n: formatCount(active.count, locale) })}</span>
         </div>
       ) : null}
       {total ? null : <p className="adm-chart-empty">{a('overview.chart.empty')}</p>}
@@ -128,9 +128,7 @@ export const StatusBreakdown = ({ stats, locale }) => {
       <div className="adm-stack" aria-hidden="true">
         {total ? (
           STATUS_ORDER.map((status) =>
-            stats.statuses[status].count ? (
-              <i key={status} className={`is-${status}`} style={{ flexGrow: stats.statuses[status].count }} />
-            ) : null,
+            stats.statuses[status] ? <i key={status} className={`is-${status}`} style={{ flexGrow: stats.statuses[status] }} /> : null,
           )
         ) : (
           <i className="is-empty" />
@@ -138,14 +136,11 @@ export const StatusBreakdown = ({ stats, locale }) => {
       </div>
       <ul className="adm-legend">
         {STATUS_ORDER.map((status) => {
-          const { count, amount } = stats.statuses[status]
+          const count = stats.statuses[status]
           return (
             <li key={status}>
               <span className={`adm-legend-dot is-${status}`} aria-hidden="true" />
               <span className="adm-legend-name">{a(`statuses.${status}`)}</span>
-              <span className="adm-legend-amount" dir="ltr">
-                {formatMoney(amount, locale, 'USD', true)}
-              </span>
               <span className="adm-legend-count">{formatCount(count, locale)}</span>
               <span className="adm-legend-share">{formatShare(total ? count / total : 0, locale)}</span>
             </li>
@@ -156,7 +151,7 @@ export const StatusBreakdown = ({ stats, locale }) => {
   )
 }
 
-export const BarList = ({ rows, locale }) => {
+export const BarList = ({ rows, total, locale }) => {
   const max = Math.max(1, ...rows.map((row) => row.count))
   return (
     <ul className="adm-barlist">
@@ -166,7 +161,7 @@ export const BarList = ({ rows, locale }) => {
             <span>{row.label}</span>
             <span className="adm-barlist-value">
               <strong>{formatCount(row.count, locale)}</strong>
-              <em dir="ltr">{formatMoney(row.amount, locale, 'USD', true)}</em>
+              <em>{formatShare(total ? row.count / total : 0, locale)}</em>
             </span>
           </div>
           <span className="adm-barlist-track" aria-hidden="true">

@@ -1,4 +1,4 @@
-import { numberLocale } from '../market/format'
+import { numberLocale } from '../i18n/locales'
 
 const cache = new Map()
 const memo = (key, create) => {
@@ -6,15 +6,9 @@ const memo = (key, create) => {
   return cache.get(key)
 }
 
-/** Wrapped in a first-strong isolate so amounts keep their order inside Arabic sentences. */
-export const formatMoney = (value, locale, currency = 'USD', compact = false) => {
-  if (!Number.isFinite(value)) return '—'
-  const options = compact
-    ? { style: 'currency', currency, notation: 'compact', maximumFractionDigits: 1 }
-    : { style: 'currency', currency, maximumFractionDigits: value % 1 ? 2 : 0 }
-  const text = memo(`m|${locale}|${currency}|${compact}|${options.maximumFractionDigits}`, () => new Intl.NumberFormat(numberLocale(locale), options)).format(value)
-  return `\u2068${text.replace(/[\u200e\u200f\u061c]/g, '')}\u2069`
-}
+/** Public-site labels (`t` from useI18n) for the request type and the department chosen on the form. */
+export const typeLabel = (t, type) => t(`contact.form.types.${type}`)
+export const departmentLabel = (t, department) => (department && department !== 'group' ? t(`departments.${department}.name`) : t('common.group'))
 
 export const formatCount = (value, locale) =>
   memo(`c|${locale}`, () => new Intl.NumberFormat(numberLocale(locale))).format(Number.isFinite(value) ? value : 0)

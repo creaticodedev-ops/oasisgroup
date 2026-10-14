@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n/I18nProvider'
 import { adminApi } from './api'
-import { formatDateTime, formatMoney, fullName } from './format'
+import { departmentLabel, formatDateTime, fullName, typeLabel } from './format'
 import { CheckIcon, CloseIcon, CopyIcon, MailIcon, WhatsAppIcon } from './icons'
 import { useDialogFocus } from './hooks'
 import { Avatar, ErrorState, StatusPill } from './parts'
 import { useAdminText } from './strings'
-import { confirmationMessage, messageLocale, openWhatsApp, whatsappUrl } from './whatsapp'
+import { followUpMessage, messageLocale, openWhatsApp, whatsappUrl } from './whatsapp'
 
 const ACTION_STYLE = { approved: 'btn-primary', active: 'btn-primary', completed: 'btn-primary', rejected: 'adm-btn-danger', pending: 'btn-ghost' }
 const ACTION_ORDER = ['approved', 'active', 'completed', 'pending', 'rejected']
@@ -14,7 +14,7 @@ const CONFIRMED = ['approved', 'active']
 
 const WhatsAppConfirm = ({ item, notice }) => {
   const a = useAdminText()
-  const initial = confirmationMessage(item)
+  const initial = followUpMessage(item)
   const [draft, setDraft] = useState(null)
   const [copied, setCopied] = useState(false)
   const message = draft ?? initial
@@ -141,7 +141,7 @@ export const ApplicationDrawer = ({ id, version, onClose, onChanged }) => {
       const data = await adminApi.setStatus(id, status)
       setState({ id, item: data.item, transitions: data.transitions, error: null })
       // Still inside the click's user activation, so the browser lets the new tab open.
-      if (status === 'approved' && data.item.phone) setWaNotice(openWhatsApp(data.item.phone, confirmationMessage(data.item)) ? 'opened' : 'blocked')
+      if (status === 'approved' && data.item.phone) setWaNotice(openWhatsApp(data.item.phone, followUpMessage(data.item)) ? 'opened' : 'blocked')
       else setWaNotice('')
       onChanged()
     } catch (err) {
@@ -194,26 +194,28 @@ export const ApplicationDrawer = ({ id, version, onClose, onChanged }) => {
                 <h2 id="adm-drawer-title" dir="auto">
                   {fullName(item)}
                 </h2>
-                <p dir="auto">{item.city}</p>
+                <p dir="auto">{[item.company, item.city].filter(Boolean).join(' · ') || typeLabel(t, item.type)}</p>
               </div>
               <StatusPill status={item.status} />
             </section>
 
             <section className="adm-invest">
-              <p className="adm-invest-label">{a('detail.investment')}</p>
-              <p className="adm-invest-amount" dir="ltr">
-                {formatMoney(item.amount, locale, item.currency)}
-              </p>
+              <p className="adm-invest-label">{a('detail.request')}</p>
+              <p className="adm-request-title">{typeLabel(t, item.type)}</p>
               <dl className="adm-invest-meta">
                 <div>
-                  <dt>{a('detail.offer')}</dt>
-                  <dd>{t(`offers.items.${item.offer}.name`)}</dd>
+                  <dt>{a('detail.department')}</dt>
+                  <dd>{departmentLabel(t, item.department)}</dd>
                 </div>
                 <div>
-                  <dt>{a('detail.duration')}</dt>
-                  <dd>{t(`register.durations.${item.duration}`)}</dd>
+                  <dt>{a('detail.submitted')}</dt>
+                  <dd>{formatDateTime(item.createdAt, locale)}</dd>
                 </div>
               </dl>
+              <h3 className="adm-message-title">{a('detail.message')}</h3>
+              <p className="adm-message" dir="auto">
+                {item.message}
+              </p>
             </section>
 
             <section className="adm-block">
@@ -257,8 +259,12 @@ export const ApplicationDrawer = ({ id, version, onClose, onChanged }) => {
                   <dd dir="auto">{item.lastName}</dd>
                 </div>
                 <div>
+                  <dt>{a(item.type === 'career' ? 'detail.position' : 'detail.company')}</dt>
+                  <dd dir="auto">{item.company || <span className="adm-muted">{a('detail.noValue')}</span>}</dd>
+                </div>
+                <div>
                   <dt>{a('detail.city')}</dt>
-                  <dd dir="auto">{item.city}</dd>
+                  <dd dir="auto">{item.city || <span className="adm-muted">{a('detail.noValue')}</span>}</dd>
                 </div>
                 <div className="is-wide">
                   <dt>{a('detail.email')}</dt>
@@ -279,7 +285,7 @@ export const ApplicationDrawer = ({ id, version, onClose, onChanged }) => {
                         </span>
                       </span>
                     ) : (
-                      <span className="adm-muted">{a('detail.noEmail')}</span>
+                      <span className="adm-muted">{a('detail.noValue')}</span>
                     )}
                   </dd>
                 </div>
@@ -288,18 +294,24 @@ export const ApplicationDrawer = ({ id, version, onClose, onChanged }) => {
                   <dd>
                     {item.phone ? (
                       <span className="adm-email">
-                        <a href={`https://wa.me/${item.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" dir="ltr">
+                        <a href={`tel:${item.phone}`} dir="ltr">
                           {item.phone}
+                        </a>
+                        <a
+                          className="adm-icon-btn is-sm"
+                          href={`https://wa.me/${item.phone.replace(/\D/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={a('detail.whatsapp')}
+                          title={a('detail.whatsapp')}
+                        >
+                          <WhatsAppIcon />
                         </a>
                       </span>
                     ) : (
-                      <span className="adm-muted">{a('detail.noEmail')}</span>
+                      <span className="adm-muted">{a('detail.noValue')}</span>
                     )}
                   </dd>
-                </div>
-                <div>
-                  <dt>{a('detail.submitted')}</dt>
-                  <dd>{formatDateTime(item.createdAt, locale)}</dd>
                 </div>
                 <div>
                   <dt>{a('detail.locale')}</dt>

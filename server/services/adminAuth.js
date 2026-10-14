@@ -3,7 +3,7 @@ import { dbState } from '../configs/db.js'
 import { AdminAccount } from '../models/AdminAccount.js'
 import { hashPassword, MIN_PASSWORD, verifyPassword } from './password.js'
 
-const COOKIE = 'usb_admin'
+const COOKIE = 'oasis_admin'
 const COOKIE_PATH = '/api/admin'
 const SESSION_MS = 12 * 3_600_000
 const FAILURE_WINDOW_MS = 15 * 60_000
@@ -116,7 +116,7 @@ export const requireAdmin = (req, res, next) => {
 
 /* ── Password reset ── */
 
-const tokenHash = (token) => sha256(`udbonds-reset:${token}`).toString('hex')
+const tokenHash = (token) => sha256(`oasis-reset:${token}`).toString('hex')
 
 /**
  * Issues a single-use reset token (only its hash is stored) and returns it, or null while a recent
