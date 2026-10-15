@@ -17,9 +17,11 @@ The site is static (Vite + React) and is hosted on Vercel without any server to 
 
 | Path | Purpose |
 | --- | --- |
-| `client/` | The website — Vite + React, plain CSS, black / white / grey design system, FR / EN / AR (RTL) |
-| `api/contact.js` | Vercel Function behind the contact form: validation, anti-spam, e-mail delivery through [Resend](https://resend.com) |
-| `vercel.json` | Build settings, routes (single-page app fallback), cache and security headers |
+| `client/` | The website — Vite + React, plain CSS, black / white / grey design system, FR / EN / AR (RTL). **This is the Vercel project root.** |
+| `client/api/contact.js` | Vercel Function behind the contact form: validation, anti-spam, e-mail delivery through [Resend](https://resend.com) |
+| `client/vercel.json` | Build settings, routes (single-page app fallback), cache and security headers |
+| `package.json` (root) | Local shortcuts only (`npm run dev`, `build`, … delegate to `client/`) — not used by Vercel |
+| `.vercelignore` | Keeps local secrets (`.env` files, the old `server/` folder) out of `vercel` CLI uploads |
 
 ## Local development
 
@@ -32,11 +34,23 @@ npm run dev       # http://localhost:3000 (also reachable from the local network
 
 Other scripts: `npm run build` (production build in `client/dist`), `npm run preview` (serves that build on port 3000), `npm run lint`. In `client/`: `npm run photos`, `npm run brand:assets`.
 
-`npm run dev` and `npm run preview` also run `api/contact.js`, so the form behaves locally exactly as in production. To send real e-mails locally, copy `client/.env.example` to `client/.env.local` and fill in the contact-form variables.
+`npm run dev` and `npm run preview` also run `client/api/contact.js`, so the form behaves locally exactly as in production. To send real e-mails locally, copy `client/.env.example` to `client/.env.local` and fill in the contact-form variables.
 
 ## Deploying on Vercel
 
-1. Push the repository to GitHub (or GitLab / Bitbucket) and import it in Vercel. Keep the **root directory** of the repository as the project root: `vercel.json` sets the install command, the build command and the output directory (`client/dist`).
+A standard single-project deployment (not Vercel Services):
+
+| Setting (Project → Settings → Build and Deployment) | Value |
+| --- | --- |
+| Root Directory | `client` |
+| Framework Preset | Vite |
+| Install Command | `npm ci` |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+
+The last four are also set in `client/vercel.json`, so only the Root Directory has to be chosen (when importing the repository, or afterwards in the settings). `client/api/contact.js` is detected automatically and deployed as a Vercel Function at `/api/contact`.
+
+1. Import the GitHub repository in Vercel and set **Root Directory** to `client`. If the project already exists and was created with the *Services* preset, switch its Framework Preset to *Vite*.
 2. In **Project → Settings → Environment Variables**, add the contact-form variables (below) and, optionally, the public `VITE_*` settings.
 3. Deploy. Every push to the main branch redeploys the site; other branches get preview URLs.
 

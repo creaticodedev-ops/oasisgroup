@@ -1,0 +1,8 @@
+# Files never uploaded by `vercel` CLI deployments (Git deployments only see tracked files).
+# Secrets belong in Vercel → Project → Settings → Environment Variables.
+server/
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+**/dist
