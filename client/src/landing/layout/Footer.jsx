@@ -104,16 +104,13 @@ export const Footer = () => {
           </div>
         </div>
 
-        <Wordmark className="foot-mark" withMark />
+        <Wordmark className="foot-mark" />
 
         <div className="foot-bottom">
           <p>{t('footer.rights', { year })}</p>
           <p className="foot-signature serif">{t('common.signature')}</p>
           <div className="foot-bottom-links">
             <LangSwitch />
-            <a href="/admin" className="foot-admin" rel="nofollow" title={t('footer.adminLabel')}>
-              {t('footer.admin')}
-            </a>
             <a
               className="link-line"
               href="#top"

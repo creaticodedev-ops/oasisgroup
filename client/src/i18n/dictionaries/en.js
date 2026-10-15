@@ -209,7 +209,7 @@ export const en = {
     titleAccent: 'your project.',
     lead: 'Quote, partnership or application: describe your need and the relevant department’s team will get back to you.',
     coordinates: 'Contact details',
-    coordinatesSoon: 'Our contact details will be published very soon. Until then, the form is the most direct way to reach us.',
+    coordinatesSoon: 'Our contact details will be published very soon.',
     email: 'Email',
     phone: 'Phone',
     whatsapp: 'WhatsApp',
@@ -250,6 +250,14 @@ export const en = {
         server: 'Unable to send right now. Please try again in a moment.',
         rate: 'Too many requests sent. Please try again in a few minutes.',
       },
+      offline: {
+        title: 'The online form is not active yet.',
+        text: 'Requests cannot be sent from this website yet. Please contact us directly:',
+        textNoContact: 'Requests cannot be sent from this website yet. Our contact details will be published very soon.',
+        email: 'Write to',
+        phone: 'Call',
+        whatsapp: 'WhatsApp',
+      },
       success: {
         title: 'Request sent.',
         text: 'Thank you {{name}}. Your request has been forwarded to {{department}}. We will get back to you shortly.',
@@ -289,7 +297,7 @@ export const en = {
       taxId: 'Tax ID',
     },
     legalSoon: 'Legal information will be published soon.',
-    contactSoon: 'Contact details coming soon — write to us through the form.',
+    contactSoon: 'Contact details coming soon.',
     contactForm: 'Contact form',
     social: {
       title: 'Follow us',
@@ -301,8 +309,6 @@ export const en = {
     },
     rights: '© {{year}} OASIS GROUP. All rights reserved.',
     backToTop: 'Back to top',
-    admin: 'Admin area',
-    adminLabel: 'Administrator area (restricted access)',
     language: 'Language',
   },
 }

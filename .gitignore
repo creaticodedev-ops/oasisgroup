@@ -2,12 +2,9 @@ node_modules
 .env
 .env.local
 .env.*.local
-.keys.json
-**/.keys.json
 *.pem
 dist
-uploads
+.vercel
 *.log
 .DS_Store
 .cache
-server/.cache

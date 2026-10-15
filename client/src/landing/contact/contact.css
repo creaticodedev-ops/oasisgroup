@@ -399,6 +399,26 @@ html[lang='ar'] :is(.field label, .segmented legend) {
   color: var(--text-muted);
 }
 
+.form-offline {
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  padding-block: 32px;
+  border-top: 1px solid var(--line);
+}
+
+.form-offline p {
+  max-width: 46ch;
+  color: var(--text-muted);
+}
+
+.form-offline-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
 .form-check {
   width: 72px;
   height: 72px;

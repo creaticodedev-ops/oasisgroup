@@ -227,7 +227,7 @@ export const fr = {
     titleAccent: 'votre projet.',
     lead: 'Devis, partenariat ou candidature : décrivez votre besoin, l’équipe du département concerné revient vers vous.',
     coordinates: 'Coordonnées',
-    coordinatesSoon: 'Nos coordonnées seront publiées très prochainement. D’ici là, le formulaire est le moyen le plus direct de nous joindre.',
+    coordinatesSoon: 'Nos coordonnées seront publiées très prochainement.',
     email: 'E-mail',
     phone: 'Téléphone',
     whatsapp: 'WhatsApp',
@@ -268,6 +268,14 @@ export const fr = {
         server: 'Envoi impossible pour le moment. Réessayez dans un instant.',
         rate: 'Trop de demandes envoyées. Réessayez dans quelques minutes.',
       },
+      offline: {
+        title: 'Le formulaire en ligne n’est pas encore activé.',
+        text: 'Les demandes ne peuvent pas encore être envoyées depuis ce site. Contactez-nous directement :',
+        textNoContact: 'Les demandes ne peuvent pas encore être envoyées depuis ce site. Nos coordonnées seront publiées très prochainement.',
+        email: 'Écrire à',
+        phone: 'Appeler le',
+        whatsapp: 'WhatsApp',
+      },
       success: {
         title: 'Demande envoyée.',
         text: 'Merci {{name}}. Votre demande a bien été transmise à {{department}}. Nous revenons vers vous rapidement.',
@@ -307,7 +315,7 @@ export const fr = {
       taxId: 'IF',
     },
     legalSoon: 'Les informations légales seront publiées prochainement.',
-    contactSoon: 'Coordonnées publiées prochainement — écrivez-nous via le formulaire.',
+    contactSoon: 'Coordonnées publiées prochainement.',
     contactForm: 'Formulaire de contact',
     social: {
       title: 'Suivez-nous',
@@ -319,8 +327,6 @@ export const fr = {
     },
     rights: '© {{year}} OASIS GROUP. Tous droits réservés.',
     backToTop: 'Retour en haut',
-    admin: 'Espace admin',
-    adminLabel: 'Espace administrateur (accès protégé)',
     language: 'Langue',
   },
 }

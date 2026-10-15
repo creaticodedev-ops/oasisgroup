@@ -11,40 +11,68 @@ Four areas of expertise, each with its own page:
 | OASIS FACILITIES | Facility management, maintenance and general services | `/expertises/facilities` |
 | OASIS IT | Technology, software development and digital transformation | `/expertises/it` |
 
-The public site sends quote, contact and application requests to the API; they are reviewed in a password-protected admin dashboard (`/admin`).
+The site is static (Vite + React) and is hosted on Vercel without any server to keep running: the only server-side code is one Vercel Function that e-mails contact-form requests.
 
 ## Structure
 
-| Folder | Purpose |
+| Path | Purpose |
 | --- | --- |
-| `client/` | Website + admin — Vite + React, plain CSS, black / white / grey design system, FR / EN / AR (RTL) |
-| `server/` | Express API + MongoDB (requests, admin authentication, notifications) |
-| `scripts/dev.mjs` | Starts both for local development |
+| `client/` | The website — Vite + React, plain CSS, black / white / grey design system, FR / EN / AR (RTL) |
+| `api/contact.js` | Vercel Function behind the contact form: validation, anti-spam, e-mail delivery through [Resend](https://resend.com) |
+| `vercel.json` | Build settings, routes (single-page app fallback), cache and security headers |
 
-## Getting started
+## Local development
 
-Requirements: Node.js 20+, MongoDB running locally (MongoDB Compass can connect to the same URI).
+Requirements: Node.js 20+.
 
 ```bash
-npm run setup                          # installs client/ and server/ dependencies
-copy server\.env.example server\.env   # Windows (cp on macOS/Linux)
-copy client\.env.example client\.env   # optional — public contact details
-npm run dev
+npm run setup     # installs client/ dependencies
+npm run dev       # http://localhost:3000 (also reachable from the local network)
 ```
 
-- Website: http://localhost:3000
-- Admin dashboard: http://localhost:3000/admin (also linked discreetly from the footer)
-- API health check: http://localhost:3000/api/health (proxied to the API on port 5000)
+Other scripts: `npm run build` (production build in `client/dist`), `npm run preview` (serves that build on port 3000), `npm run lint`. In `client/`: `npm run photos`, `npm run brand:assets`.
 
-If port 5000 is already in use, start with another one for both processes, e.g. in PowerShell: `$env:PORT=5055; $env:API_PORT=5055; npm run dev`.
+`npm run dev` and `npm run preview` also run `api/contact.js`, so the form behaves locally exactly as in production. To send real e-mails locally, copy `client/.env.example` to `client/.env.local` and fill in the contact-form variables.
 
-Other scripts: `npm run build`, `npm run lint`, `npm run dev:client`, `npm run dev:server`, and in `client/`: `npm run photos`, `npm run brand:assets`.
+## Deploying on Vercel
+
+1. Push the repository to GitHub (or GitLab / Bitbucket) and import it in Vercel. Keep the **root directory** of the repository as the project root: `vercel.json` sets the install command, the build command and the output directory (`client/dist`).
+2. In **Project → Settings → Environment Variables**, add the contact-form variables (below) and, optionally, the public `VITE_*` settings.
+3. Deploy. Every push to the main branch redeploys the site; other branches get preview URLs.
+
+Routes: `/` and `/expertises/:slug`; any other path falls back to the home page. Hashed assets (`/assets/*`) are cached for a year, photographs for a week.
+
+Plan note: Vercel's free **Hobby** plan is intended for personal, non-commercial use. For a company website, check Vercel's current fair-use terms — the **Pro** plan is the commercial option. Nothing in the project depends on the plan.
+
+### Contact form
+
+`POST /api/contact` validates the request (same rules as the form: required fields, e-mail, phone number in international format, message of 20–4000 characters, consent), rejects cross-site submissions, filters basic bots with a hidden honeypot field, limits each visitor to 5 requests per 10 minutes, and e-mails the request to the company with the visitor's address as *Reply-To*. Nothing is stored.
+
+| Variable | Purpose |
+| --- | --- |
+| `RESEND_API_KEY` | API key of the Resend account (free tier available) |
+| `CONTACT_TO_EMAIL` | Address(es) receiving the requests, comma-separated |
+| `CONTACT_FROM_EMAIL` | Sender on a domain verified in Resend, e.g. `OASIS GROUP <site@your-domain.ma>`. Without it, Resend's test sender is used, which only delivers to the Resend account's own address |
+
+While `RESEND_API_KEY` or `CONTACT_TO_EMAIL` is missing, the site does not pretend to work: the form is replaced by a notice and, when they are configured, the public e-mail / phone / WhatsApp links. If delivery fails, the visitor sees an error and keeps what they typed.
+
+### Public settings (optional)
+
+Set in Vercel (or `client/.env.local` locally). Empty values are not displayed anywhere — the site never shows placeholder coordinates or legal information.
+
+| Variable | Purpose |
+| --- | --- |
+| `VITE_SITE_URL` | Public address, e.g. `https://www.oasisgroup.ma` — used for the social image URL and `sitemap.xml`. Defaults to the Vercel production domain |
+| `VITE_CONTACT_EMAIL`, `VITE_CONTACT_PHONE`, `VITE_CONTACT_WHATSAPP` | Contact details (contact section, footer) |
+| `VITE_COMPANY_ADDRESS`, `VITE_CONTACT_HOURS` | Address and opening hours |
+| `VITE_LEGAL_NAME`, `VITE_LEGAL_FORM`, `VITE_LEGAL_RC`, `VITE_LEGAL_ICE`, `VITE_LEGAL_IF` | Legal mentions shown in the footer |
+| `VITE_SOCIAL_LINKEDIN`, `VITE_SOCIAL_INSTAGRAM`, `VITE_SOCIAL_FACEBOOK` | Official profiles (full `https://` URLs); a network is shown only once configured |
+
+`VITE_*` values are built into the pages: redeploy after changing them.
 
 ## Website
 
-Routes: `/` (home) and `/expertises/:slug` (department pages). Any other path falls back to the home page. Page changes use the View Transitions API when available.
-
-Home sections, in order: Hero, À propos (vision, mission, values), Nos expertises, Pourquoi OASIS GROUP ?, Nos engagements, Nos réalisations, Carrières, Contact. Each department page has its own hero, introduction, services, approach, links to the other departments and a contact form preset to that department.
+Home sections, in order: Hero, À propos (vision, mission, values), Nos expertises, Pourquoi OASIS GROUP ?, Nos engagements, Nos réalisations, Carrières, Contact. Each department page has its own hero, introduction, services, approach, links to the other departments and a contact form preset to that department. Page changes use the View Transitions API when available.
 
 Motion is limited to reveal-on-scroll, parallax on photographs and hover states. Everything is disabled with `prefers-reduced-motion: reduce`, and content stays visible without JavaScript.
 
@@ -56,7 +84,7 @@ Nothing in the site is invented: no client references, figures, certifications, 
 - Department settings (order, photos, slugs) — `client/src/config/departments.js`.
 - Projects — `client/src/config/projects.js`. Empty by default: the section shows « Nos références, sur demande. » with contact buttons. Add only real projects whose client agreed to publication.
 - Open positions — `client/src/config/careers.js`. Empty by default: the section invites spontaneous applications.
-- Company details — `client/.env` (see below). Empty values are simply not displayed.
+- Company details — environment variables above.
 
 ### Photography
 
@@ -64,66 +92,10 @@ Photos come from Unsplash (Unsplash License — free for commercial use). The ca
 
 ### Brand assets
 
-The monogram is drawn in SVG (`BrandMark` in `client/src/landing/ui.jsx`). `npm run brand:assets` (in `client/`) regenerates the favicons and the social sharing image from the same geometry.
+The official logo is `client/brand/oasis-group-logo.png` (white on transparent). `npm run brand:assets` (in `client/`) derives everything from it, copying its pixels without redrawing them:
 
-## API
+- `client/src/assets/brand/oasis-group-logo.png` — the logo trimmed to its artwork, used in the header, menu and footer. It is never displayed larger than its intrinsic size.
+- `client/src/assets/brand/oasis-group-emblem.png` — the "O" emblem alone, used as a mask so it takes the colour of the surrounding text (diagram of the "Pourquoi" section, link to the group on department pages).
+- `client/public/favicon.ico`, `favicon-32x32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `og-image.png`.
 
-| Route | Purpose |
-| --- | --- |
-| `GET /api/health` | API and database status |
-| `POST /api/inquiries` | New request: `type` (`quote`, `contact`, `career`), `department` (`group`, `corporate`, `performance`, `facilities`, `it`), `firstName`, `lastName`, `company` (optional), `email`, `phone` + `phoneCountry` (validated with libphonenumber-js, stored in E.164), `city` (optional), `message` (20–4000 characters), `consent: true`, `locale` |
-
-`POST /api/inquiries` answers `201` on success, `422` with per-field errors, `429` when rate limited (5 requests per 10 minutes per IP) and `503` when the database is unavailable. A hidden honeypot field filters basic bots. Requests are stored in the `inquiries` collection; each one also creates an entry in `notifications` and is pushed live to open admin sessions.
-
-## Admin dashboard
-
-`/admin` — overview (statistics computed from the database: totals, last 30 days, breakdowns by status, subject and department), request list (search, filters by status / subject / department, sorting, pagination), request drawer with message, contact details and status history, and a notification centre with real-time alerts.
-
-Statuses (internal key → label): `pending` → Nouvelle, `approved` → Qualifiée, `rejected` → Non retenue, `active` → En cours, `completed` → Traitée. Allowed transitions: `pending` → `approved` / `rejected`, `approved` → `active` (or back to `pending` / `rejected`), `rejected` → `pending`, `active` → `completed`, `completed` → `active`. Every change is recorded in the request's `history`.
-
-WhatsApp follow-up: qualifying a request opens WhatsApp (`wa.me`) on the number submitted in the form, with an acknowledgement message in the sender's language (subject, department, date). The message can be edited and re-sent from the request drawer; the admin presses Send in WhatsApp.
-
-The administrator account lives in the `adminaccounts` collection. On first start it is created from `ADMIN_PASSWORD` (12 characters minimum), which is hashed with scrypt immediately; the variable can then be removed from `server/.env`. The session is an HMAC-signed, httpOnly, SameSite=Strict cookie valid for 12 hours; failed sign-ins are throttled per IP. Without an account the admin API answers `503`.
-
-Password reset ("Forgot password?" on the login page): a single-use token valid 30 minutes; only its SHA-256 hash is stored. The link (`/admin/reset#token=…`) is e-mailed to `ADMIN_EMAIL` when SMTP is configured, otherwise printed in the API server terminal. Password change: dashboard → Settings (`/admin/settings`).
-
-| Route (all under `/api/admin`, session required except `/session` and `/password/*`) | Purpose |
-| --- | --- |
-| `GET` / `POST` / `DELETE /session` | Session status, sign in (`{ password }`), sign out |
-| `POST /password/forgot` | Issues a reset link (`{ locale }`) |
-| `POST /password/verify` | Checks a reset token (`{ token }`) — `410` if invalid or expired |
-| `POST /password/reset` | Sets the new password (`{ token, password, confirm }`) |
-| `POST /password/change` | Changes the password (`{ current, password, confirm }`) |
-| `GET /stream` | Server-Sent Events: `inquiry`, `inquiry-update`, `notifications` |
-| `GET /inquiries?q=&status=&type=&department=&sort=&order=&page=&limit=` | Paginated requests, with per-status counts |
-| `GET /inquiries/:id` | Request detail and allowed transitions |
-| `PATCH /inquiries/:id` | Status change (`{ status }`) — `409` if the transition is not allowed |
-| `GET /stats?tz=` | Totals, per-status / subject / department breakdowns, last 30 days, latest requests |
-| `GET /notifications?filter=unread&limit=` | Notifications with unread count |
-| `POST /notifications/read` | Mark as read (`{ ids }` or `{ all: true }`) |
-| `PATCH /notifications/:id` | Mark one as read or unread (`{ read }`) |
-
-## Configuration
-
-`server/.env`
-
-| Variable | Default |
-| --- | --- |
-| `MONGODB_URI` | `mongodb://127.0.0.1:27017/oasisgroup` |
-| `PORT` | `5000` |
-| `ADMIN_PASSWORD` | — (initial password only, hashed into the database on first start, then removable) |
-| `ADMIN_SESSION_SECRET` | Optional — a random secret stored with the account is used when empty |
-| `ADMIN_APP_URL` | `http://localhost:3000` (base of the reset link) |
-| `ADMIN_EMAIL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Optional — e-mail delivery of the reset link |
-
-The admin account is stored in the database named in `MONGODB_URI`. When pointing an existing installation to a new database, set `ADMIN_PASSWORD` again for the first start.
-
-`client/.env` (optional — empty values are not displayed anywhere)
-
-| Variable | Purpose |
-| --- | --- |
-| `VITE_SITE_URL` | Public site URL |
-| `VITE_CONTACT_EMAIL`, `VITE_CONTACT_PHONE`, `VITE_CONTACT_WHATSAPP` | Contact details (contact section, footer, menu) |
-| `VITE_COMPANY_ADDRESS`, `VITE_CONTACT_HOURS` | Address and opening hours |
-| `VITE_LEGAL_NAME`, `VITE_LEGAL_FORM`, `VITE_LEGAL_RC`, `VITE_LEGAL_ICE`, `VITE_LEGAL_IF` | Legal mentions shown in the footer |
-| `VITE_SOCIAL_LINKEDIN`, `VITE_SOCIAL_INSTAGRAM`, `VITE_SOCIAL_FACEBOOK` | Official profiles (full `https://` URLs); a network is shown only once configured |
+The current file is small (artwork of 100 × 39 px): it is sharp at its size on standard screens but soft on high-density screens and in the large icons. To fix that, replace `client/brand/oasis-group-logo.png` with a larger export of the same logo (white on transparent, ideally 4× or more), run `npm run brand:assets`, and update `LOGO_WIDTH` / `LOGO_HEIGHT` in `client/src/landing/ui.jsx` and the emblem's `aspect-ratio` in `client/src/styles/global.css` with the sizes printed by the script, divided by the same factor.

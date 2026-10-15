@@ -1,35 +1,24 @@
-import { useId, useRef } from 'react'
+import { useRef } from 'react'
+import logoUrl from '../assets/brand/oasis-group-logo.png'
 import { useI18n } from '../i18n/I18nProvider'
 import { LOCALES } from '../i18n/locales'
 import { useFitText } from './hooks'
 import { isPlainClick, navigate } from './navigation'
 
-/** Monogram: a sun cut by two horizon lines — same geometry as the favicons (scripts/generate-brand-assets.mjs). */
-export const BrandMark = ({ className = '' }) => {
-  const mask = useId()
-  return (
-    <svg className={className} viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-      <mask id={mask}>
-        <rect width="40" height="40" fill="#fff" />
-        <rect y="22.6" width="40" height="2" fill="#000" />
-        <rect y="28.4" width="40" height="3" fill="#000" />
-      </mask>
-      <circle cx="20" cy="20" r="18" fill="currentColor" mask={`url(#${mask})`} />
-    </svg>
-  )
-}
+// Intrinsic size of the logo file, as printed by `npm run brand:assets`.
+const LOGO_WIDTH = 100
+const LOGO_HEIGHT = 39
 
+/** The emblem of the logo (the "O"), painted in the current text colour — see `.brand-mark` in global.css. */
+export const BrandMark = ({ className = '' }) => <span className={`brand-mark ${className}`.trim()} aria-hidden="true" />
+
+/** Official logo (white on transparent). Never displayed above its intrinsic size. */
 export const Logo = ({ className = '' }) => (
-  <span className={`logo ${className}`.trim()} dir="ltr">
-    <BrandMark className="logo-mark" />
-    <span className="logo-word">
-      OASIS<em>GROUP</em>
-    </span>
-  </span>
+  <img className={`logo ${className}`.trim()} src={logoUrl} width={LOGO_WIDTH} height={LOGO_HEIGHT} alt="OASIS GROUP" decoding="async" />
 )
 
 /** Monumental "OASIS GROUP", fitted to its container width; letters rise one by one (`data-reveal="letters"`). */
-export const Wordmark = ({ className = '', withMark = false, delay = 0 }) => {
+export const Wordmark = ({ className = '', delay = 0 }) => {
   const ref = useRef(null)
   useFitText(ref)
   const letters = (word, offset) =>
@@ -42,13 +31,8 @@ export const Wordmark = ({ className = '', withMark = false, delay = 0 }) => {
   return (
     <div ref={ref} className={`wordmark ${className}`.trim()} aria-hidden="true" dir="ltr" data-reveal="letters" style={{ '--d': delay }}>
       <span className="wordmark-inner">
-        {withMark ? (
-          <span className="wordmark-cell wordmark-sign" style={{ '--l': 0 }}>
-            <BrandMark />
-          </span>
-        ) : null}
-        <span className="wordmark-word">{letters('OASIS', 1)}</span>
-        <span className="wordmark-word is-light-weight">{letters('GROUP', 6)}</span>
+        <span className="wordmark-word">{letters('OASIS', 0)}</span>
+        <span className="wordmark-word is-light-weight">{letters('GROUP', 5)}</span>
       </span>
     </div>
   )

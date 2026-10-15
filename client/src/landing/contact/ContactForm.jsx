@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEPARTMENTS } from '../../config/departments'
+import { SITE } from '../../config/site'
 import { useI18n } from '../../i18n/I18nProvider'
 import { ArrowIcon } from '../ui'
-import { submitInquiry } from './api'
+import { contactAvailability, submitInquiry } from './api'
 import { REQUEST_TYPES, useContact } from './context'
 import { DEFAULT_COUNTRY, isInternational, parsePhone } from './phone'
 import { PhoneField } from './PhoneField'
@@ -55,9 +56,47 @@ const Field = ({ id, label, hint, error, errorText, multiline = false, ...input 
   )
 }
 
+/** Shown instead of the form while e-mail delivery is not configured: no request can be lost. */
+const FormOffline = () => {
+  const { t } = useI18n()
+  const { email, phone, whatsapp } = SITE.contact
+  const links = [
+    email && { key: 'email', href: `mailto:${email}`, value: email },
+    phone && { key: 'phone', href: `tel:${phone.replace(/\s+/g, '')}`, value: phone },
+    whatsapp && { key: 'whatsapp', href: `https://wa.me/${whatsapp.replace(/\D/g, '')}`, value: whatsapp, external: true },
+  ].filter(Boolean)
+
+  return (
+    <div className="form-offline" role="status">
+      <h3 className="h3">{t('contact.form.offline.title')}</h3>
+      <p>{t(links.length ? 'contact.form.offline.text' : 'contact.form.offline.textNoContact')}</p>
+      {links.length ? (
+        <ul className="form-offline-links">
+          {links.map((item) => (
+            <li key={item.key}>
+              <a
+                className="btn btn-line"
+                href={item.href}
+                {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                <span>
+                  {t(`contact.form.offline.${item.key}`)} <span dir="ltr">{item.value}</span>
+                  {item.external ? <span className="sr-only"> {t('common.newTab')}</span> : null}
+                </span>
+                <ArrowIcon />
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  )
+}
+
 export const ContactForm = ({ defaultDepartment = '' }) => {
   const { t, locale } = useI18n()
   const { intent } = useContact()
+  const [available, setAvailable] = useState(null)
   const [values, setValues] = useState(() => emptyValues('quote', defaultDepartment))
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState(false)
@@ -66,6 +105,16 @@ export const ContactForm = ({ defaultDepartment = '' }) => {
   const [sentTo, setSentTo] = useState('')
   const formRef = useRef(null)
   const doneRef = useRef(null)
+
+  useEffect(() => {
+    let active = true
+    contactAvailability().then((value) => {
+      if (active) setAvailable(value)
+    })
+    return () => {
+      active = false
+    }
+  }, [])
 
   useEffect(() => {
     if (status === 'done') doneRef.current?.focus()
@@ -138,7 +187,9 @@ export const ContactForm = ({ defaultDepartment = '' }) => {
       setStatus('done')
     } catch (error) {
       setStatus('idle')
-      if (error.status === 422 && error.body?.fields) {
+      if (error.status === 503 && error.body?.code === 'not_configured') {
+        setAvailable(false)
+      } else if (error.status === 422 && error.body?.fields) {
         setErrors(Object.fromEntries(Object.keys(error.body.fields).map((key) => [key, FIELD_ERRORS.includes(key) ? key : 'required'])))
       } else {
         setServerError(t(error.status === 429 ? 'contact.form.errors.rate' : 'contact.form.errors.server'))
@@ -155,6 +206,8 @@ export const ContactForm = ({ defaultDepartment = '' }) => {
 
   const errorText = (key) => t(`contact.form.errors.${FIELD_ERRORS.includes(errors[key]) ? errors[key] : 'required'}`)
   const optional = `(${t('contact.form.optional')})`
+
+  if (available === false) return <FormOffline />
 
   if (status === 'done') {
     return (

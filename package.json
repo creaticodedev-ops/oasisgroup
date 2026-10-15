@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "setup": "npm install --prefix client && npm install --prefix server",
-    "dev": "node scripts/dev.mjs",
-    "dev:client": "npm run dev --prefix client",
-    "dev:server": "npm run dev --prefix server",
+    "setup": "npm install --prefix client",
+    "dev": "npm run dev --prefix client",
     "build": "npm run build --prefix client",
+    "preview": "npm run preview --prefix client",
     "lint": "npm run lint --prefix client"
   }
 }

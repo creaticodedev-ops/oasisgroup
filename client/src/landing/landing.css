@@ -81,12 +81,12 @@ html[lang='ar'] :is(.line.is-accent > span, .is-accent-serif) {
   padding-block: 8px;
 }
 
-.nav-logo .logo-mark {
-  transition: transform 0.9s var(--ease);
+.nav-logo .logo {
+  transition: opacity 0.4s var(--ease);
 }
 
-.nav-logo:hover .logo-mark {
-  transform: rotate(-180deg);
+.nav-logo:hover .logo {
+  opacity: 0.78;
 }
 
 .nav-links {
@@ -652,10 +652,6 @@ html[lang='ar'] .foot-col h3 {
   line-height: 0.9;
 }
 
-.foot-mark .wordmark-sign {
-  margin-inline-end: 0.02em;
-}
-
 .foot-bottom {
   display: flex;
   flex-wrap: wrap;
@@ -679,15 +675,6 @@ html[lang='ar'] .foot-col h3 {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 24px;
-}
-
-.foot-admin {
-  color: var(--text-dim);
-  transition: color 0.3s var(--ease);
-}
-
-.foot-admin:hover {
-  color: var(--text-strong);
 }
 
 @media (min-width: 1024px) {

@@ -509,39 +509,28 @@ html[lang='ar'] .eyebrow {
 
 /* ───────────── Brand ───────────── */
 
+/* The logo file is 39px high: it is shown at that size or smaller, never enlarged. */
 .logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-strong);
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.logo-mark {
+  display: block;
   flex: none;
-  width: 30px;
-  height: 30px;
+  width: auto;
+  height: 34px;
+  max-height: 39px;
 }
 
-.logo-word {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.42em;
-  font-family: var(--font-display);
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+@media (min-width: 960px) {
+  .logo {
+    height: 39px;
+  }
 }
 
-.logo-word em {
-  font-style: normal;
-  font-weight: 300;
-}
-
-html[lang='ar'] .logo-word {
-  font-family: var(--font-display);
-  letter-spacing: 0.16em;
+.brand-mark {
+  display: inline-block;
+  flex: none;
+  aspect-ratio: 28 / 26;
+  background-color: currentColor;
+  -webkit-mask: url('../assets/brand/oasis-group-emblem.png') center / contain no-repeat;
+  mask: url('../assets/brand/oasis-group-emblem.png') center / contain no-repeat;
 }
 
 /* Monumental wordmark — font-size is set by useFitText */
@@ -581,12 +570,6 @@ html[lang='ar'] .logo-word {
 
 .wordmark-cell > * {
   display: inline-block;
-}
-
-.wordmark-sign svg {
-  display: block;
-  width: 0.66em;
-  height: 0.66em;
 }
 
 .has-reveal [data-reveal='letters'] .wordmark-cell > * {
