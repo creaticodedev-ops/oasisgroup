@@ -1,7 +1,7 @@
 /**
  * Contact form endpoint — a Vercel Function: it only runs when a request arrives, no server to keep online.
  *
- *   GET  /api/contact  → { enabled }  whether e-mail delivery is configured (the site hides the form otherwise)
+ *   GET  /api/contact  → { enabled }  whether e-mail delivery is configured
  *   POST /api/contact  → validates the request and e-mails it to the company through Resend (resend.com)
  *
  * Environment variables (Vercel → Project → Settings → Environment Variables):

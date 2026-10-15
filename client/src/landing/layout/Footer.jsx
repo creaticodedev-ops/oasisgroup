@@ -1,20 +1,14 @@
 import { DEPARTMENTS, departmentPath } from '../../config/departments'
-import { LEGAL_ITEMS, NAV_ITEMS, SITE } from '../../config/site'
+import { CONTACT_ITEMS, LEGAL_ITEMS, NAV_ITEMS } from '../../config/site'
 import { useI18n } from '../../i18n/I18nProvider'
 import { scrollToSection } from '../hooks'
 import { sectionHref } from '../navigation'
 import { LangSwitch, Link, Logo, Wordmark } from '../ui'
-import { SocialLinks } from './SocialLinks'
+import { SocialRail } from './SocialLinks'
 
 const ContactList = () => {
   const { t } = useI18n()
-  const { email, phone, whatsapp, address } = SITE.contact
-  const items = [
-    email && { key: 'email', href: `mailto:${email}`, value: email },
-    phone && { key: 'phone', href: `tel:${phone.replace(/\s+/g, '')}`, value: phone },
-    whatsapp && { key: 'whatsapp', href: `https://wa.me/${whatsapp.replace(/\D/g, '')}`, value: whatsapp, external: true },
-    address && { key: 'address', value: address },
-  ].filter(Boolean)
+  const items = CONTACT_ITEMS.filter((item) => item.key !== 'hours')
 
   return (
     <ul className="foot-list">
@@ -23,8 +17,14 @@ const ContactList = () => {
           <li key={item.key}>
             <span className="foot-label">{t(`contact.${item.key}`)}</span>
             {item.href ? (
-              <a className="link-line" href={item.href} dir="ltr" {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+              <a
+                className="link-line"
+                href={item.href}
+                dir={item.ltr ? 'ltr' : 'auto'}
+                {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
                 {item.value}
+                {item.external ? <span className="sr-only"> {t('common.newTab')}</span> : null}
               </a>
             ) : (
               <span>{item.value}</span>
@@ -57,7 +57,7 @@ export const Footer = () => {
           <div className="foot-brand">
             <Logo />
             <p>{t('footer.statement')}</p>
-            <SocialLinks />
+            <SocialRail />
           </div>
           <nav className="foot-col" aria-label={t('footer.navTitle')}>
             <h3>{t('footer.navTitle')}</h3>

@@ -1,29 +1,32 @@
-import { SITE } from '../../config/site'
+import { CONTACT_ITEMS, SOCIAL_LINKS } from '../../config/site'
 import { useI18n } from '../../i18n/I18nProvider'
-import { SectionHead } from '../ui'
+import { SocialCards } from '../layout/SocialLinks'
+import { DiagonalArrow, SectionHead } from '../ui'
 import { ContactForm } from './ContactForm'
 import './contact.css'
 
 const Coordinates = () => {
   const { t } = useI18n()
-  const { email, phone, whatsapp, address, hours } = SITE.contact
-  const items = [
-    email && { key: 'email', href: `mailto:${email}`, value: email, ltr: true },
-    phone && { key: 'phone', href: `tel:${phone.replace(/\s+/g, '')}`, value: phone, ltr: true },
-    whatsapp && { key: 'whatsapp', href: `https://wa.me/${whatsapp.replace(/\D/g, '')}`, value: whatsapp, ltr: true, external: true },
-    address && { key: 'address', value: address },
-    hours && { key: 'hours', value: hours },
-  ].filter(Boolean)
-
-  if (!items.length) return <p className="contact-soon">{t('contact.coordinatesSoon')}</p>
+  if (!CONTACT_ITEMS.length) return <p className="contact-soon">{t('contact.coordinatesSoon')}</p>
 
   return (
     <dl className="contact-list">
-      {items.map((item) => (
+      {CONTACT_ITEMS.map((item) => (
         <div key={item.key}>
           <dt>{t(`contact.${item.key}`)}</dt>
           <dd>
-            {item.href ? (
+            {item.key === 'address' ? (
+              <>
+                <span className="contact-address">
+                  <bdi>{item.value}</bdi>
+                </span>
+                <a className="contact-maps link-arrow" href={item.href} target="_blank" rel="noopener noreferrer">
+                  <span>{t('contact.maps')}</span>
+                  <DiagonalArrow size={12} />
+                  <span className="sr-only"> {t('common.newTab')}</span>
+                </a>
+              </>
+            ) : item.href ? (
               <a
                 className="link-line"
                 href={item.href}
@@ -54,7 +57,13 @@ export const ContactSection = ({ defaultDepartment = '' }) => {
             <h3 className="contact-coords-title">{t('contact.coordinates')}</h3>
             <Coordinates />
           </div>
-          <p className="contact-signature serif" data-reveal="fade" style={{ '--d': 4 }}>
+          {SOCIAL_LINKS.length ? (
+            <div className="contact-social" data-reveal="up" style={{ '--d': 4 }}>
+              <h3 className="contact-coords-title">{t('contact.social')}</h3>
+              <SocialCards />
+            </div>
+          ) : null}
+          <p className="contact-signature serif" data-reveal="fade" style={{ '--d': 5 }}>
             {t('common.signature')}
           </p>
         </div>

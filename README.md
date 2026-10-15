@@ -68,19 +68,18 @@ Plan note: Vercel's free **Hobby** plan is intended for personal, non-commercial
 | `CONTACT_TO_EMAIL` | Address(es) receiving the requests, comma-separated |
 | `CONTACT_FROM_EMAIL` | Sender on a domain verified in Resend, e.g. `OASIS GROUP <site@your-domain.ma>`. Without it, Resend's test sender is used, which only delivers to the Resend account's own address |
 
-While `RESEND_API_KEY` or `CONTACT_TO_EMAIL` is missing, the site does not pretend to work: the form is replaced by a notice and, when they are configured, the public e-mail / phone / WhatsApp links. If delivery fails, the visitor sees an error and keeps what they typed.
+While `RESEND_API_KEY` or `CONTACT_TO_EMAIL` is missing, the form stays visible but the site does not pretend to send: on submit, the endpoint answers `503` and the visitor sees a discreet notice that online sending will be available soon. If delivery fails, the visitor sees an error. In both cases they keep what they typed.
 
 ### Public settings (optional)
 
-Set in Vercel (or `client/.env.local` locally). Empty values are not displayed anywhere — the site never shows placeholder coordinates or legal information.
+The official address, mobile and landline numbers, and the LinkedIn and Instagram profiles are set in `client/src/config/site.js`. The variables below add optional details; set them in Vercel (or `client/.env.local` locally). Empty values are not displayed anywhere — the site never shows placeholder coordinates or legal information.
 
 | Variable | Purpose |
 | --- | --- |
 | `VITE_SITE_URL` | Public address, e.g. `https://www.oasisgroup.ma` — used for the social image URL and `sitemap.xml`. Defaults to the Vercel production domain |
-| `VITE_CONTACT_EMAIL`, `VITE_CONTACT_PHONE`, `VITE_CONTACT_WHATSAPP` | Contact details (contact section, footer) |
-| `VITE_COMPANY_ADDRESS`, `VITE_CONTACT_HOURS` | Address and opening hours |
+| `VITE_CONTACT_EMAIL`, `VITE_CONTACT_WHATSAPP`, `VITE_CONTACT_HOURS` | Additional contact details (contact section, footer) |
 | `VITE_LEGAL_NAME`, `VITE_LEGAL_FORM`, `VITE_LEGAL_RC`, `VITE_LEGAL_ICE`, `VITE_LEGAL_IF` | Legal mentions shown in the footer |
-| `VITE_SOCIAL_LINKEDIN`, `VITE_SOCIAL_INSTAGRAM`, `VITE_SOCIAL_FACEBOOK` | Official profiles (full `https://` URLs); a network is shown only once configured |
+| `VITE_SOCIAL_FACEBOOK` | Official Facebook page (full `https://` URL); shown only once configured |
 
 `VITE_*` values are built into the pages: redeploy after changing them.
 

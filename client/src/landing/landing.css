@@ -568,6 +568,147 @@ html[lang='ar'] .menu-links a {
   color: var(--bg);
 }
 
+.social-icon {
+  flex: none;
+}
+
+/* Exit arrow: the first leaves through the corner, its twin slides in behind it */
+.social-arrow {
+  position: relative;
+  display: block;
+  flex: none;
+  overflow: hidden;
+}
+
+.social-arrow .icon-diag {
+  transition: transform 0.55s var(--ease);
+}
+
+.social-arrow .icon-diag + .icon-diag {
+  position: absolute;
+  inset: 0;
+  transform: translate(-110%, 110%);
+}
+
+[dir='rtl'] .social-arrow {
+  transform: scaleX(-1);
+}
+
+@media (hover: hover) {
+  :is(.social-card, .social-rail-link):is(:hover, :focus-visible) .social-arrow .icon-diag:first-child {
+    transform: translate(110%, -110%);
+  }
+
+  :is(.social-card, .social-rail-link):is(:hover, :focus-visible) .social-arrow .icon-diag + .icon-diag {
+    transform: none;
+  }
+}
+
+/* Footer rail */
+.social-rail {
+  justify-self: stretch;
+  width: 100%;
+  max-width: 360px;
+  margin-top: 8px;
+}
+
+.social-rail .social-rail-title {
+  max-width: none;
+  margin-bottom: 12px;
+  color: var(--text-dim);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+html[lang='ar'] .social-rail .social-rail-title {
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+}
+
+.social-rail ul {
+  border-top: 1px solid var(--line);
+}
+
+.social-rail li {
+  border-bottom: 1px solid var(--line);
+}
+
+.social-rail-link {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  color: var(--text-muted);
+  transition: color 0.4s var(--ease);
+}
+
+.social-rail-link::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--text-strong);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s var(--ease);
+}
+
+[dir='rtl'] .social-rail-link::after {
+  transform-origin: right;
+}
+
+.social-rail-link > :is(.social-icon, .social-rail-name) {
+  transition: transform 0.6s var(--ease);
+}
+
+.social-rail-name {
+  color: var(--text);
+  font-size: 0.9375rem;
+  transition: color 0.4s var(--ease);
+}
+
+.social-rail-handle {
+  justify-self: end;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text-dim);
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.social-rail-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .social-rail-link:is(:hover, :focus-visible) {
+    color: var(--text-strong);
+  }
+
+  .social-rail-link:is(:hover, :focus-visible) .social-rail-name {
+    color: var(--text-strong);
+  }
+
+  .social-rail-link:is(:hover, :focus-visible)::after {
+    transform: scaleX(1);
+  }
+
+  .social-rail-link:is(:hover, :focus-visible) > :is(.social-icon, .social-rail-name) {
+    transform: translateX(6px);
+  }
+
+  [dir='rtl'] .social-rail-link:is(:hover, :focus-visible) > :is(.social-icon, .social-rail-name) {
+    transform: translateX(-6px);
+  }
+}
+
 /* ───────────── Footer ───────────── */
 
 .foot {
@@ -622,6 +763,12 @@ html[lang='ar'] .foot-col h3 {
 
 .foot-list a {
   color: var(--text);
+}
+
+.foot-list a::before {
+  content: '';
+  position: absolute;
+  inset: -8px -4px;
 }
 
 .foot-label {

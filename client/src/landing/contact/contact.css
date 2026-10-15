@@ -56,6 +56,45 @@ html[lang='ar'] .contact-coords-title {
   overflow-wrap: anywhere;
 }
 
+.contact-list a::before {
+  content: '';
+  position: absolute;
+  inset: -10px -6px;
+}
+
+.contact-address {
+  display: block;
+}
+
+.contact-maps {
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  transition: color 0.4s var(--ease);
+}
+
+.contact-maps:hover,
+.contact-maps:focus-visible {
+  color: var(--text-strong);
+}
+
+.contact-maps .icon-diag {
+  transition: transform 0.5s var(--ease);
+}
+
+.contact-maps:hover .icon-diag {
+  transform: translate(2px, -2px);
+}
+
+[dir='rtl'] .contact-maps .icon-diag {
+  transform: scaleX(-1);
+}
+
+[dir='rtl'] .contact-maps:hover .icon-diag {
+  transform: scaleX(-1) translate(2px, -2px);
+}
+
 .contact-soon {
   max-width: 42ch;
   padding-top: 20px;
@@ -68,6 +107,179 @@ html[lang='ar'] .contact-coords-title {
   color: var(--text-dim);
   font-size: clamp(1.5rem, 1.2rem + 1vw, 2.125rem);
   line-height: 1.2;
+}
+
+/* ───────────────────────── Official channels ───────────────────────── */
+
+.social-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.social-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 24px;
+  height: 100%;
+  min-height: 188px;
+  padding: 18px 18px 16px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--text-strong);
+  transition:
+    color 0.6s var(--ease),
+    border-color 0.6s var(--ease);
+}
+
+.social-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -2;
+  background: var(--text-strong);
+  transform: translateY(101%);
+  transition: transform 0.7s var(--ease);
+}
+
+.social-card-ghost {
+  position: absolute;
+  inset-inline-end: -44px;
+  bottom: -52px;
+  z-index: -1;
+  opacity: 0.045;
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.9s var(--ease);
+}
+
+.social-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.social-card-index {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  opacity: 0.5;
+}
+
+.social-card-body {
+  display: grid;
+  align-content: end;
+  gap: 6px;
+}
+
+.social-card-kind {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.56;
+}
+
+html[lang='ar'] .social-card-kind {
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+}
+
+.social-card-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.social-card-foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  border-top-color: color-mix(in srgb, currentColor 16%, transparent);
+}
+
+.social-card-foot::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: -1px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.9s var(--ease) 0.1s;
+}
+
+[dir='rtl'] .social-card-foot::before {
+  transform-origin: right;
+}
+
+.social-card-handle {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.62;
+}
+
+.social-card:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.social-card:active {
+  transform: translateY(1px);
+}
+
+@media (hover: hover) {
+  .social-card:is(:hover, :focus-visible) {
+    border-color: var(--text-strong);
+    color: var(--bg);
+  }
+
+  .social-card:is(:hover, :focus-visible)::before {
+    transform: none;
+  }
+
+  .social-card:is(:hover, :focus-visible) .social-card-ghost {
+    opacity: 0.09;
+    transform: translate(-10px, -10px) rotate(-6deg);
+  }
+
+  [dir='rtl'] .social-card:is(:hover, :focus-visible) .social-card-ghost {
+    transform: translate(10px, -10px) rotate(6deg);
+  }
+
+  .social-card:is(:hover, :focus-visible) .social-card-foot::before {
+    transform: scaleX(1);
+  }
+}
+
+@media (max-width: 359px) {
+  .social-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 640px) {
+  .social-cards {
+    gap: 16px;
+  }
+
+  .social-card {
+    min-height: 216px;
+    padding: 22px 22px 18px;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -363,6 +575,13 @@ html[lang='ar'] :is(.field label, .segmented legend) {
   font-size: 0.875rem;
 }
 
+.form-notice {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
 .form-submit {
   min-height: 60px;
   margin-top: 16px;
@@ -397,26 +616,6 @@ html[lang='ar'] :is(.field label, .segmented legend) {
 .form-done p {
   max-width: 46ch;
   color: var(--text-muted);
-}
-
-.form-offline {
-  display: grid;
-  justify-items: start;
-  gap: 18px;
-  padding-block: 32px;
-  border-top: 1px solid var(--line);
-}
-
-.form-offline p {
-  max-width: 46ch;
-  color: var(--text-muted);
-}
-
-.form-offline-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 8px;
 }
 
 .form-check {
