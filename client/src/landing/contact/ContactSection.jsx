@@ -1,5 +1,6 @@
 import { CONTACT_ITEMS, SOCIAL_LINKS } from '../../config/site'
 import { useI18n } from '../../i18n/I18nProvider'
+import { DocumentCard } from '../layout/DocumentCard'
 import { SocialCards } from '../layout/SocialLinks'
 import { DiagonalArrow, SectionHead } from '../ui'
 import { ContactForm } from './ContactForm'
@@ -57,13 +58,17 @@ export const ContactSection = ({ defaultDepartment = '' }) => {
             <h3 className="contact-coords-title">{t('contact.coordinates')}</h3>
             <Coordinates />
           </div>
+          <div className="contact-doc" data-reveal="up" style={{ '--d': 4 }}>
+            <h3 className="contact-coords-title">{t('documents.eyebrow')}</h3>
+            <DocumentCard />
+          </div>
           {SOCIAL_LINKS.length ? (
-            <div className="contact-social" data-reveal="up" style={{ '--d': 4 }}>
+            <div className="contact-social" data-reveal="up" style={{ '--d': 5 }}>
               <h3 className="contact-coords-title">{t('contact.social')}</h3>
               <SocialCards />
             </div>
           ) : null}
-          <p className="contact-signature serif" data-reveal="fade" style={{ '--d': 5 }}>
+          <p className="contact-signature serif" data-reveal="fade" style={{ '--d': 6 }}>
             {t('common.signature')}
           </p>
         </div>

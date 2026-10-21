@@ -201,6 +201,20 @@ export const ar = {
     cta: 'ترشيح تلقائي',
     photoAlt: 'فريق يعمل معاً حول طاولة في فضاء مكتبي',
   },
+  documents: {
+    eyebrow: 'وثيقة رسمية',
+    view: 'عرض PDF',
+    download: 'تحميل',
+    brochure: {
+      kind: 'عرض مؤسسي',
+      title: 'كتيّب OASIS GROUP 2026',
+      text: 'اكتشفوا المجموعة وأقسامها الأربعة وعرض خدماتها المتكاملة.',
+      meta: '{{year}} · {{pages}} صفحات · PDF',
+      hint: 'قبل طلب عرض السعر،',
+      hintLink: 'اطّلعوا على كتيّبنا',
+      footer: 'كتيّب 2026',
+    },
+  },
   contact: {
     eyebrow: 'اتصل بنا',
     title: 'لنتحدث عن',

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEPARTMENTS } from '../../config/departments'
 import { useI18n } from '../../i18n/I18nProvider'
+import { BrochureHint } from '../layout/DocumentCard'
 import { ArrowIcon } from '../ui'
 import { submitInquiry } from './api'
 import { REQUEST_TYPES, useContact } from './context'
@@ -190,6 +191,8 @@ export const ContactForm = ({ defaultDepartment = '' }) => {
           ))}
         </div>
       </fieldset>
+
+      {values.type === 'quote' ? <BrochureHint /> : null}
 
       <div className="field is-select">
         <label htmlFor="department">{t('contact.form.department')}</label>

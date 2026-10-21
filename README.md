@@ -18,6 +18,7 @@ The site is static (Vite + React) and is hosted on Vercel without any server to 
 | Path | Purpose |
 | --- | --- |
 | `client/` | The website — Vite + React, plain CSS, black / white / grey design system, FR / EN / AR (RTL). **This is the Vercel project root.** |
+| `client/public/docs/` | Official public PDFs (e.g. institutional brochure), served at `/docs/…` |
 | `client/api/contact.js` | Vercel Function behind the contact form: validation, anti-spam, e-mail delivery through [Resend](https://resend.com) |
 | `client/vercel.json` | Build settings, routes (single-page app fallback), cache and security headers |
 | `package.json` (root) | Local shortcuts only (`npm run dev`, `build`, … delegate to `client/`) — not used by Vercel |

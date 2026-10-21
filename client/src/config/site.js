@@ -29,6 +29,22 @@ export const SITE = {
   },
 }
 
+/**
+ * Official public documents served from `client/public/docs/`.
+ * View opens the PDF in the browser; download uses the same file with a clean filename.
+ */
+export const DOCUMENTS = {
+  brochure: {
+    id: 'brochure',
+    href: '/docs/oasis-group-brochure-2026.pdf',
+    downloadName: 'Oasis-Group-Brochure-2026.pdf',
+    pages: 11,
+    year: 2026,
+  },
+}
+
+export const BROCHURE = DOCUMENTS.brochure
+
 /** Home page sections, in display order. `primary` items are shown in the desktop bar; the full menu lists them all. */
 export const NAV_ITEMS = [
   { id: 'about', key: 'about', primary: true },

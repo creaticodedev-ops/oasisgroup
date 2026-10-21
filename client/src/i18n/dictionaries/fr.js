@@ -221,6 +221,20 @@ export const fr = {
     cta: 'Candidature spontanée',
     photoAlt: 'Équipe travaillant ensemble autour d’une table dans un espace de bureau',
   },
+  documents: {
+    eyebrow: 'Document officiel',
+    view: 'Voir le PDF',
+    download: 'Télécharger',
+    brochure: {
+      kind: 'Présentation institutionnelle',
+      title: 'Brochure OASIS GROUP 2026',
+      text: 'Découvrez le groupe, ses quatre départements et son offre de services intégrés.',
+      meta: '{{year}} · {{pages}} pages · PDF',
+      hint: 'Avant votre demande de devis,',
+      hintLink: 'consultez notre brochure',
+      footer: 'Brochure 2026',
+    },
+  },
   contact: {
     eyebrow: 'Contact',
     title: 'Parlons de',

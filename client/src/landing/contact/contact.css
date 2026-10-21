@@ -102,6 +102,196 @@ html[lang='ar'] .contact-coords-title {
   color: var(--text-muted);
 }
 
+/* ───────────────────────── Corporate brochure ───────────────────────── */
+
+.doc-card {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  padding: 22px 22px 20px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+
+.doc-card::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--text-strong);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.7s var(--ease);
+}
+
+.doc-card-mark {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-strong);
+}
+
+.doc-card-format {
+  color: var(--text-dim);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.doc-icon {
+  flex: none;
+  color: var(--text-strong);
+}
+
+.doc-card-body {
+  display: grid;
+  gap: 8px;
+}
+
+.doc-card-kind {
+  color: var(--text-dim);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+html[lang='ar'] .doc-card-kind,
+html[lang='ar'] .doc-card-format {
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+}
+
+.doc-card-title {
+  margin: 0;
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.doc-card-text {
+  max-width: 42ch;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.doc-card-meta {
+  margin-top: 4px;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.doc-card-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.doc-action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 14px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--text-strong);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition:
+    color 0.5s var(--ease),
+    border-color 0.5s var(--ease);
+}
+
+.doc-action::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background: var(--text-strong);
+  transform: translateY(101%);
+  transition: transform 0.55s var(--ease);
+}
+
+.doc-action svg {
+  flex: none;
+  transition: transform 0.5s var(--ease);
+}
+
+.doc-action:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .doc-card:hover::before {
+    transform: scaleY(1);
+  }
+
+  .doc-action:is(:hover, :focus-visible) {
+    border-color: var(--text-strong);
+    color: var(--bg);
+  }
+
+  .doc-action:is(:hover, :focus-visible)::before {
+    transform: none;
+  }
+
+  .doc-action-view:is(:hover, :focus-visible) svg {
+    transform: translateY(-1px);
+  }
+
+  .doc-action-download:is(:hover, :focus-visible) svg {
+    transform: translateY(2px);
+  }
+}
+
+.doc-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin: -4px 0 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.doc-hint .doc-icon {
+  color: var(--text-strong);
+}
+
+.doc-hint .link-line {
+  color: var(--text-strong);
+  font-weight: 500;
+}
+
+@media (max-width: 419px) {
+  .doc-card-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .contact-signature {
   margin-top: auto;
   color: var(--text-dim);

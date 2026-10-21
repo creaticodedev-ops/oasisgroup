@@ -203,6 +203,20 @@ export const en = {
     cta: 'Spontaneous application',
     photoAlt: 'Team working together around a table in an office',
   },
+  documents: {
+    eyebrow: 'Official document',
+    view: 'View PDF',
+    download: 'Download',
+    brochure: {
+      kind: 'Institutional presentation',
+      title: 'OASIS GROUP Brochure 2026',
+      text: 'Discover the group, its four departments and its integrated service offering.',
+      meta: '{{year}} · {{pages}} pages · PDF',
+      hint: 'Before requesting a quote,',
+      hintLink: 'view our brochure',
+      footer: 'Brochure 2026',
+    },
+  },
   contact: {
     eyebrow: 'Contact',
     title: 'Let’s talk about',

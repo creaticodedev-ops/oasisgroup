@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n/I18nProvider'
 import { scrollToSection } from '../hooks'
 import { sectionHref } from '../navigation'
 import { LangSwitch, Link, Logo, Wordmark } from '../ui'
+import { BrochureLink } from './DocumentCard'
 import { SocialRail } from './SocialLinks'
 
 const ContactList = () => {
@@ -38,6 +39,9 @@ const ContactList = () => {
         <Link className="link-line" href={sectionHref('contact')}>
           {t('footer.contactForm')}
         </Link>
+      </li>
+      <li>
+        <BrochureLink />
       </li>
     </ul>
   )
